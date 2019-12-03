@@ -12,6 +12,9 @@ logging.basicConfig()
 STATE = {"value": 0}
 
 USERS = set()
+USERS_CAR = set()
+USERS_NN = set()
+# Clients = dict()
 
 
 def state_event():
@@ -36,11 +39,13 @@ async def notify_users():
 
 async def register(websocket):
     USERS.add(websocket)
+    # Clients[websocket] = None
     await notify_users()
 
 
 async def unregister(websocket):
     USERS.remove(websocket)
+    USERS_CAR.remove(websocket)
     await notify_users()
 
 
@@ -51,7 +56,9 @@ async def counter(websocket, path):
         await websocket.send(state_event())
         async for message in websocket:
             data = json.loads(message)
-            if data["action"] == "minus":
+            if data["client_name"] == "car":
+                USERS_CAR.add(websocket)
+            elif data["action"] == "minus":
                 STATE["value"] -= 1
                 await notify_state()
             elif data["action"] == "plus":

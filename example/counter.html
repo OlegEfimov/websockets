@@ -59,6 +59,10 @@
             plus.onclick = function (event) {
                 websocket.send(JSON.stringify({action: 'plus'}));
             }
+            websocket.onopen = function (event) {
+                websocket.send(JSON.stringify({client_name: 'car'}));
+                console.log(event)
+            }
             websocket.onmessage = function (event) {
                 data = JSON.parse(event.data);
                 switch (data.type) {
